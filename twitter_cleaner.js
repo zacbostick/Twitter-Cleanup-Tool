@@ -1,88 +1,86 @@
-/**
- * Twitter Cleaner Script
- * 
- * This script provides functions to help clean up your Twitter account by
- * unliking tweets, removing bookmarks, and undoing retweets. Each function 
- * can be run independently depending on your needs.
- * 
- * To use: Open Twitter in your browser, open the Developer Console (F12 or 
- * Ctrl+Shift+I), paste the entire script, and then call the function you need.
- */
-
-/* -----------------------------
- * Function to Unlike Tweets
- * -----------------------------
- */
-
-function unlikeTweets() {
-    const unlikeButtons = document.querySelectorAll('button[data-testid="unlike"]');
-    
-    if (unlikeButtons.length > 0) {
-        unlikeButtons[0].click();
-        console.log("Clicked an unlike button.");
-        const randomDelay = Math.floor(Math.random() * 3000) + 1000;
-        setTimeout(unlikeTweets, randomDelay);
-    } else {
-        window.scrollTo(0, document.body.scrollHeight);
-        console.log("Scrolled down the page.");
-
-        const randomDelay = Math.floor(Math.random() * 3000) + 1000;
-        setTimeout(unlikeTweets, randomDelay);
+function scrollIfNeeded() {
+    if ((window.innerHeight + window.scrollY) >= document.body.scrollHeight - 100) {
+        return false;
     }
+    window.scrollTo(0, document.body.scrollHeight);
+    return true;
 }
 
-/* -----------------------------
- * Function to Remove Bookmarks
- * -----------------------------
- */
-
-function removeBookmarks() {
-    const unbookmarkButtons = document.querySelectorAll('button[data-testid="removeBookmark"]');
-    
-    if (unbookmarkButtons.length > 0) {
-        unbookmarkButtons[0].click();
-        console.log("Clicked a remove bookmark button.");
-        const randomDelay = Math.floor(Math.random() * 3000) + 1000;
-        setTimeout(removeBookmarks, randomDelay);
-    } else {
-        window.scrollTo(0, document.body.scrollHeight);
-        console.log("Scrolled down the page.");
-        const randomDelay = Math.floor(Math.random() * 3000) + 1000;
-        setTimeout(removeBookmarks, randomDelay);
-    }
-}
-
-/* -----------------------------
- * Function to Undo Retweets
- * -----------------------------
- */
-
-function undoRetweets() {
-    const unretweetButtons = document.querySelectorAll('button[data-testid="unretweet"]');
-    
-    if (unretweetButtons.length > 0) {
-        unretweetButtons[0].click();
-        console.log("Clicked an unretweet button.");
-        setTimeout(() => {
-            const confirmButton = document.querySelector('div[data-testid="unretweetConfirm"]');
-            if (confirmButton) {
-                confirmButton.click();
-                console.log("Confirmed the unretweet.");
-            } else {
-                console.log("Confirmation button not found.");
+function unlikeTweets(batchSize = 5) {
+    try {
+        const unlikeButtons = document.querySelectorAll('button[data-testid="unlike"]');
+        if (unlikeButtons.length > 0) {
+            for (let i = 0; i < Math.min(batchSize, unlikeButtons.length); i++) {
+                unlikeButtons[i].click();
+                console.log(`Clicked unlike button ${i + 1}.`);
             }
-            const randomDelay = Math.floor(Math.random() * 3000) + 1000;
-            setTimeout(undoRetweets, randomDelay);
-        }, 500);
-    } else {
-        window.scrollTo(0, document.body.scrollHeight);
-        console.log("Scrolled down the page.");
-        const randomDelay = Math.floor(Math.random() * 3000) + 1000;
-        setTimeout(undoRetweets, randomDelay);
+            const randomDelay = Math.floor(Math.random() * 3000) + 2000;
+            setTimeout(unlikeTweets, randomDelay, batchSize);
+        } else if (scrollIfNeeded()) {
+            console.log("Scrolled down the page.");
+            const randomDelay = Math.floor(Math.random() * 3000) + 2000;
+            setTimeout(unlikeTweets, randomDelay, batchSize);
+        } else {
+            console.log("No more tweets to unlike.");
+        }
+    } catch (error) {
+        console.error("An error occurred while unliking tweets:", error);
+        setTimeout(unlikeTweets, 5000, batchSize);
     }
 }
 
-// To use a function, simply call one of the following in the console:
-// unlikeTweets();
-// removeBookmarks();
-// undoRetweets();
+function removeBookmarks(batchSize = 5) {
+    try {
+        const unbookmarkButtons = document.querySelectorAll('button[data-testid="removeBookmark"]');
+        if (unbookmarkButtons.length > 0) {
+            for (let i = 0; i < Math.min(batchSize, unbookmarkButtons.length); i++) {
+                unbookmarkButtons[i].click();
+                console.log(`Clicked remove bookmark button ${i + 1}.`);
+            }
+            const randomDelay = Math.floor(Math.random() * 3000) + 2000;
+            setTimeout(removeBookmarks, randomDelay, batchSize);
+        } else if (scrollIfNeeded()) {
+            console.log("Scrolled down the page.");
+            const randomDelay = Math.floor(Math.random() * 3000) + 2000;
+            setTimeout(removeBookmarks, randomDelay, batchSize);
+        } else {
+            console.log("No more bookmarks to remove.");
+        }
+    } catch (error) {
+        console.error("An error occurred while removing bookmarks:", error);
+        setTimeout(removeBookmarks, 5000, batchSize);
+    }
+}
+
+function undoRetweets(batchSize = 5) {
+    try {
+        const unretweetButtons = document.querySelectorAll('button[data-testid="unretweet"]');
+        if (unretweetButtons.length > 0) {
+            for (let i = 0; i < Math.min(batchSize, unretweetButtons.length); i++) {
+                unretweetButtons[i].click();
+                console.log(`Clicked unretweet button ${i + 1}.`);
+                setTimeout(() => {
+                    const confirmButton = document.querySelector('div[data-testid="unretweetConfirm"]');
+                    if (confirmButton) {
+                        confirmButton.click();
+                        console.log("Confirmed the unretweet.");
+                    } else {
+                        console.log("Confirmation button not found.");
+                    }
+                }, 500);
+            }
+            const randomDelay = Math.floor(Math.random() * 3000) + 2000;
+            setTimeout(undoRetweets, randomDelay, batchSize);
+        } else if (scrollIfNeeded()) {
+            console.log("Scrolled down the page.");
+            const randomDelay = Math.floor(Math.random() * 3000) + 2000;
+            setTimeout(undoRetweets, randomDelay, batchSize);
+        } else {
+            console.log("No more retweets to undo.");
+        }
+    } catch (error) {
+        console.error("An error occurred while undoing retweets:", error);
+        setTimeout(undoRetweets, 5000, batchSize);
+    }
+}
+
